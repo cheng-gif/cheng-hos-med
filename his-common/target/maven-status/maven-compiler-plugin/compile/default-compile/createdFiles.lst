@@ -1,0 +1,6 @@
+cn\his\cli\utils\Consultation.class
+cn\his\cli\interceptor\SsoCookieWrapperInterceptor.class
+cn\his\cli\config\SwaggerConfig.class
+cn\his\cli\response\Response.class
+cn\his\cli\response\ResponseEnum.class
+cn\his\cli\http\HttpClientHelper.class

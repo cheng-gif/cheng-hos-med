@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.his.cli.mapper.AddfessMapper">
+    <select id="findAllAddfess" resultType="cn.his.cli.pojo.hos.Addfess">
+        select * from hos_addfess
+    </select>
+</mapper>

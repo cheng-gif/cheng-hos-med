@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.his.cli.mapper.DrugInfomationMapper">
+
+    <resultMap id="ResultList" type="cn.his.cli.pojo.hos.DrugInformation">
+        <id property="id" column="id"/>
+        <result property="number" column="number"/>
+        <result property="barCode" column="bar_code"/>
+        <result property="commonName" column="common_name"/>
+        <result property="pinyin" column="pinyin"/>
+        <result property="status" column="status"/>
+        <result property="standard" column="standard"/>
+        <result property="drugCate" column="drug_cate"/>
+        <result property="purchPrice" column="purch_price"/>
+        <result property="sellPrice" column="sell_price"/>
+        <result property="createDate" column="createDate"/>
+        <result property="octDrug" column="oct_drug"/>
+        <result property="approvalNumber" column="approval_number"/>
+        <result property="basicCoef" column="basic_coef"/>
+        <result property="doseCoef" column="dose_coef"/>
+        <result property="allowSplit" column="allow_split"/>
+        <result property="singleUsage" column="single_usage"/>
+        <result property="frequency" column="frequency"/>
+        <result property="day" column="day"/>
+        <result property="total" column="total"/>
+        <result property="invenHigh" column="inven_high"/>
+        <result property="invenDown" column="inven_down"/>
+        <result property="cargoPull" column="cargo_pull"/>
+        <result property="earlyWarn" column="early_warn"/>
+        <result property="explanation" column="explanation"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <resultMap id="MedicineResult" type="cn.his.cli.pojo.hos.DrugInformation" extends="ResultList">
+        <association property="cate" javaType="cn.his.cli.pojo.hos.DrugCate">
+            <id property="id" column="hid"/>
+            <result property="cateName" column="hcateName"/>
+            <result property="createDate" column="hcreateDate"/>
+        </association>
+        <association property="usage" javaType="cn.his.cli.pojo.hos.DrugUsage">
+            <id property="id" column="uid"/>
+            <result property="name" column="uname"/>
+        </association>
+    </resultMap>
+
+
+    <select id="findAll" resultMap="MedicineResult">
+        SELECT hdi.* ,hdc.`id` AS hid,hdc.`cateName` AS hcateName,hdc.`createDate` AS hcreateDate,
+        hdc.`prescri_type` AS hprescri_type,hdc.`create_id` AS hcreate_id,usa.`id` AS uid,usa.`name` AS uname
+        FROM `hos_drug_information` hdi,`hos_drug_cate` hdc,`hos_drug_usage` usa
+        WHERE hdi.`cate_id` = hdc.`id`
+        AND hdi.`usage_id`=usa.`id`
+        <if test="typeId!=null and typeId!=''">
+            and hdi.`cate_id`=#{typeId}
+        </if>
+        <if test="cateName!=null and cateName!=''">
+            and (hdi.`common_name` LIKE CONCAT('%',#{cateName},'%') OR hdi.`pinyin` LIKE CONCAT('%',#{cateName},'%'))
+        </if>
+    </select>
+</mapper>

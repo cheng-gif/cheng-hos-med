@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+欢迎<span th:text="${name}"></span>来到长沙肛泰医院
+<table border="1">
+    <tr>
+        <td>姓名</td>
+        <td th:text="${name}"></td>
+    </tr>
+    <tr>
+        <td>卡号</td>
+        <td th:text="${cardNo}"></td>
+    </tr>
+    <tr>
+        <td>年龄</td>
+        <td th:text="${age}"></td>
+    </tr>
+    <tr>
+        <td>联系方式</td>
+        <td th:text="${phone}"></td>
+    </tr>
+    <tr>
+        <td>生日</td>
+        <td th:text="${birthday}"></td>
+    </tr>
+</table>
+<h3>在未来的日子里，希望您能每天都来！</h3>
+</body>
+</html>

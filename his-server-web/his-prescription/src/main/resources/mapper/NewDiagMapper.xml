@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.his.cli.mapper.NewDiagMapper">
+    <insert id="addAdviceInfo">
+        insert into newl_diag_medlist (newdiag_id,advice_id) values
+        <foreach collection="adviceId" item="advices" separator=",">
+            (#{diagId},#{advices})
+        </foreach>
+    </insert>
+
+    <insert id="addDiagInfo">
+        insert into newl_diag_list (newdiag_id,diag_id) values
+        <foreach collection="diagInfoId" item="diaginfo" separator=",">
+            (#{diagId},#{diaginfo})
+        </foreach>
+    </insert>
+
+    <insert id="addItemCheck">
+    insert into ` hospitalmanager `.` med_men_check `
+	(` item_id `, ` quantity `, ` type_id `, ` amount `, ` doc_main_id `, ` remark `,`total`)
+	values
+	<foreach collection="menCheck" item="men" separator=",">
+        (#{men.itemExamine.id},
+        #{men.quantity},
+        #{men.itemCate.id},
+        #{men.amount},
+        #{newdiagId},
+        #{men.remark},
+        #{men.total})
+    </foreach>
+    </insert>
+
+    <select id="getMaxNewdiagId" resultType="integer">
+        SELECT MAX(id) FROM `newl_diag`
+    </select>
+
+    <insert id="addWesternInfo">
+        INSERT INTO `hospitalmanager`.`med_men_western`
+        (`drug_id`,`single_usage`,`usage_id`,`frequency`,`day`,`total`,`price`,`doc_main_id`)
+        VALUES
+        <foreach collection="menWesterns" item="men" separator=",">
+            (#{men.information.id},
+            #{men.singleUsage},
+            #{men.usage.id},
+            #{men.frequency},
+            #{men.day},
+            #{men.total},
+            #{men.price},
+            #{newdiagId})
+        </foreach>
+    </insert>
+
+    <insert id="addEastInfo">
+        INSERT INTO `hospitalmanager`.`med_men_east`
+        (`drug_id`,`single_usage`,`usage_id`,`frequency`,`day`,`total`,`price`,`doc_main_id`)
+        VALUES
+        <foreach collection="menEasts" item="men" separator="," >
+            (#{men.information.id},
+            #{men.singleUsage},
+            #{men.usage.id},
+            #{men.frequency},
+            #{men.day},
+            #{men.total},
+            #{men.price},
+            #{newdiagId})
+        </foreach>
+    </insert>
+
+    <insert id="addNewDiagInfo">
+        insert into newl_diag (consultation_type,patient_id)
+        values (#{consultationType},#{patienId})
+    </insert>
+</mapper>

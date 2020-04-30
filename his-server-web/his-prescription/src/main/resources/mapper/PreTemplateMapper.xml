@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.his.cli.mapper.PreTemplateMapper">
+
+    <resultMap id="baseResult" type="cn.his.cli.pojo.hos.PreTemplate">
+        <id property="id" column="id"/>
+        <result property="tempName" column="tempName"/>
+        <result property="diagnosis" column="diagnosis"/>
+        <result property="premiss" column="premiss"/>
+        <result property="createDate" column="createDate"/>
+        <result property="number" column="number"/>
+        <result property="remarks" column="remarks"/>
+        <association property="prescriType" javaType="cn.his.cli.pojo.hos.PrescriType">
+            <id property="id" column="hid"/>
+            <result property="typeName" column="htypeName"/>
+        </association>
+    </resultMap>
+    <resultMap id="templateResult" type="cn.his.cli.pojo.hos.PreTemplate" extends="baseResult">
+        <association property="user" javaType="cn.his.cli.pojo.hos.User">
+            <result property="id" column="uid"/>
+            <result property="name" column="uname"/>
+        </association>
+
+    </resultMap>
+
+    <resultMap id="tempWithDrugInfo" type="cn.his.cli.pojo.hos.PreTemplate" extends="baseResult">
+        <collection property="drugInformations" ofType="cn.his.cli.pojo.hos.DrugInformation">
+            <id property="id" column="did"/>
+            <result property="commonName" column="dname"/>
+            <result property="singleUsage" column="dusage"/>
+            <result property="frequency" column="dfrequency"/>
+            <result property="day" column="dday"/>
+            <result property="total" column="dtotal"/>
+            <result property="sellPrice" column="dprice"/>
+            <association property="usage" javaType="cn.his.cli.pojo.hos.DrugUsage">
+                <result property="name" column="uname"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <resultMap id="tempWithItem" type="cn.his.cli.pojo.hos.PreTemplate" extends="baseResult">
+        <collection property="itemExamines" ofType="cn.his.cli.pojo.hos.ItemExamine">
+            <id property="id" column="hid"/>
+            <result property="name" column="hname"/>
+            <result property="part" column="hpart"/>
+            <result property="price" column="hprice"/>
+            <result property="remark" column="hremark"/>
+            <association property="itemCate" javaType="cn.his.cli.pojo.hos.ItemCate">
+                <id property="id" column="hcid"/>
+                <result property="name" column="hcname"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="findAllTemplateByIdAndPremiss" resultMap="templateResult">
+        SELECT t.*,hp.`id` AS hid,hp.`typeName` AS htypeName,hp.`createDate` AS hcreateDate,
+        hp.`create_id` AS hcreate_id,`user`.id AS uid,`user`.`name` AS uname
+        FROM `hos_pre_template` t,`hos_prescri_type` hp,`hos_user` `user`
+        WHERE t.`prescri_type`=hp.`id`
+        AND t.`create_id`=`user`.`id`
+        <if test="typeId!=null and typeId!=''">
+            and t.prescri_type=#{typeId}
+        </if>
+        <if test="premiss!=null and premiss!=''">
+            and premiss=#{premiss}
+        </if>
+        <if test="chooise!=null and chooise!=''">
+            and (t.number like CONCAT('%',#{chooise},'%') or t.tempName like CONCAT('%',#{chooise},'%'))
+        </if>
+
+    </select>
+
+    <select id="findByTempId" resultMap="tempWithDrugInfo">
+        SELECT t.*,drug.`id` AS did,drug.`common_name` AS dname,
+        drug.`single_usage` AS dusage,drug.`frequency` AS dfrequency,
+        drug.`day` AS dday,drug.`total` AS dtotal,drug.`sell_price` AS dprice,
+        usa.`name` AS uname,hp.`id` AS hid,hp.`typeName` AS htypeName
+        FROM `hos_temp_info` i,`hos_pre_template` t,`hos_drug_information` drug,`hos_drug_usage` usa,`hos_prescri_type` hp
+        WHERE i.`tempId`=t.`id`
+        AND i.`drugInfoId`=drug.`id`
+        AND usa.`id`=drug.`id`
+        AND hp.`id`=t.`prescri_type`
+        <if test="id!=null and id!=''">
+            AND t.`id`=#{id}
+        </if>
+
+    </select>
+
+    <select id="findByTempIdWithItemExine" resultMap="tempWithItem">
+        SELECT t.*,he.`id` AS heid,he.`name` AS hname,he.`part` AS hpart,hc.`id` AS hcid,hc.`name` AS hcname,
+        he.`price`AS hprice,he.`remark` AS hremark,hp.`id` AS hid,hp.`typeName` AS htypeName
+        FROM `hos_pre_template` t,`hos_temp_item` ht,`hos_item_examine` he,`hos_item_cate` hc,`hos_prescri_type` hp
+        WHERE t.`id` = ht.`tempId`
+        AND ht.`itemId`=he.`id`
+        AND hc.`id`=he.`cate_id`
+        AND hp.`id`=t.`prescri_type`
+        <if test="id!=null and id!=''">
+            and t.id=#{id}
+        </if>
+    </select>
+
+</mapper>

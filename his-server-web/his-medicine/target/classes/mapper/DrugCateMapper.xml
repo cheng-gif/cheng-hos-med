@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.his.cli.mapper.DrugCateMapper">
+    <select id="getAllDrugCates" resultType="cn.his.cli.pojo.hos.DrugCate">
+        select * from hos_drug_cate
+    </select>
+
+    <select id="findCateById" resultType="cn.his.cli.pojo.hos.DrugCate">
+        SELECT * FROM `hos_drug_cate`
+        <if test="typeId!=null and typeId!='0'">
+            WHERE prescri_type=#{typeId}
+        </if>
+
+    </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.his.cli.mapper.ItemExamineMapper">
+
+    <resultMap id="baseResult" type="cn.his.cli.pojo.hos.ItemExamine">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="part" column="part"/>
+    </resultMap>
+
+    <resultMap id="examineResult" type="cn.his.cli.pojo.hos.ItemExamine" extends="baseResult">
+        <association property="itemUtil" javaType="cn.his.cli.pojo.hos.ItemUtil">
+            <id property="id" column="uid"/>
+            <result property="name" column="uname"/>
+        </association>
+        <association property="itemCate" javaType="cn.his.cli.pojo.hos.ItemCate">
+            <id property="id" column="cid"/>
+            <result property="cateName" column="cname"/>
+        </association>
+    </resultMap>
+
+    <select id="findAllByCateIdAndCateName" resultMap="examineResult">
+        SELECT ie.*,ic.`id` AS cid,ic.`cateName` AS cname,ic.`createDate` AS ccreateDate,iu.`id` AS uid,iu.`name` AS uname
+        FROM `hos_item_examine` ie,`hos_item_cate` ic,`hos_item_util` iu
+        WHERE ie.`cate_id`=ic.`id`
+        AND ie.`util_id`=iu.`id`
+        <if test="cateId!=null and cateId!=''">
+            and ie.cate_id=#{cateId}
+        </if>
+        <if test="cateName!=null and cateName!=''">
+            and (ie.name like CONCAT('%',#{cateName},'%') or ie.pinyin like CONCAT('%',#{cateName},'%') )
+        </if>
+    </select>
+</mapper>

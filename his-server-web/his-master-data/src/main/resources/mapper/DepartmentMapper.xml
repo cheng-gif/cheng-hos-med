@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.his.cli.mapper.DepartmentMapper">
+
+    <resultMap id="depResult" type="cn.his.cli.pojo.hos.Department">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <collection property="userList" ofType="cn.his.cli.pojo.hos.User">
+            <id property="id" column="uid"/>
+            <result property="name" column="uname"/>
+        </collection>
+    </resultMap>
+
+    <select id="findAllDepWithUser" resultMap="depResult">
+        SELECT dep.*,u.id AS uid,u.`name`AS uname
+        FROM `hos_department` dep,`hos_user` u
+        WHERE dep.`id`=u.`dep_id`
+        <if test="id!=null and id!='' and id!=1">
+            and dep.`id`=#{id}
+        </if>
+    </select>
+</mapper>
